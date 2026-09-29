@@ -39,7 +39,7 @@ echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab
 ## Before you deploy
 
 1. In EC2 → **Instances**, copy the server's **Public IPv4 address**. No DNS or domain is needed. Do not stop the instance: an automatically assigned public IP normally changes when it is stopped and started.
-2. On the server, copy `.env.production.example` to `.env.production`. Set `PUBLIC_IP`, `APP_URL`, `API_URL`, and `CORS_ORIGINS` to that exact address, for example `http://13.234.56.78`. Leave `COOKIE_SECURE=false`. Set one AI provider key. Generate the encryption key with `openssl rand -hex 32`. Keep it forever: rotating it without a migration makes stored OAuth tokens unreadable.
+2. On the server, copy `.env.production.example` to `.env.production`. Set `PUBLIC_IP`, `APP_URL`, `API_URL`, and `CORS_ORIGINS` to that exact address, for example `http://13.234.56.78`. Leave `COOKIE_SECURE=false`. An AI provider key is optional; without one, AI features use the built-in fallback template. Generate the encryption key with `openssl rand -hex 32`. Keep it forever: rotating it without a migration makes stored OAuth tokens unreadable.
 3. This endpoint is **HTTP only**. Do not store real passwords, social-provider client secrets, or production OAuth tokens in it. Social OAuth, including Google/YouTube, will not work with a public-IP callback: Google requires HTTPS and does not permit raw IP hosts (except localhost). Use the app's mock connections for this deployment.
 
 ## Deploy and update

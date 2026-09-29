@@ -8,9 +8,6 @@ function assertProductionSecrets() {
   if (!process.env.ENCRYPTION_KEY || process.env.ENCRYPTION_KEY === 'local-development-key') {
     missing.push('ENCRYPTION_KEY (must be a unique 64-char hex value in production)')
   }
-  if (!process.env.ANTHROPIC_API_KEY && !process.env.GEMINI_API_KEY && !process.env.OPENROUTER_API_KEY) {
-    missing.push('At least one AI provider key: ANTHROPIC_API_KEY, GEMINI_API_KEY, or OPENROUTER_API_KEY')
-  }
   if (missing.length) {
     console.error('❌ Missing required production environment variables:')
     for (const v of missing) console.error(`   • ${v}`)
