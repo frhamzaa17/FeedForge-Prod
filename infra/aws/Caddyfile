@@ -1,0 +1,14 @@
+# Explicit HTTP is required for an IP-only deployment. A public IP cannot use
+# Caddy's publicly trusted automatic HTTPS certificates without a domain.
+http://{$PUBLIC_IP} {
+    encode zstd gzip
+
+    @api path /api/*
+    handle @api {
+        reverse_proxy api:4000
+    }
+
+    handle {
+        reverse_proxy web:3000
+    }
+}

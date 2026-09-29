@@ -1,0 +1,158 @@
+{
+  "folders": [
+    {
+      "name": "🏠 Root",
+      "path": "."
+    },
+    {
+      "name": "🌐 Web (Next.js)",
+      "path": "apps/web"
+    },
+    {
+      "name": "⚙️ API (NestJS)",
+      "path": "apps/api"
+    },
+    {
+      "name": "🔄 Worker (BullMQ)",
+      "path": "apps/worker"
+    },
+    {
+      "name": "📦 Shared Package",
+      "path": "packages/shared"
+    },
+    {
+      "name": "🗄️ Database Package",
+      "path": "packages/database"
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "eslint.workingDirectories": [
+      "apps/web",
+      "apps/api",
+      "apps/worker",
+      "packages/shared",
+      "packages/database"
+    ],
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.next": true,
+      "**/dist": true,
+      "**/.turbo": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/.next": true,
+      "**/dist": true,
+      "**/.turbo": true
+    },
+    "terminal.integrated.env.windows": {
+      "NODE_ENV": "development"
+    },
+    "git.ignoreLimitWarning": true,
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[sql]": {
+      "editor.defaultFormatter": "adpyke.codesnap"
+    },
+    "workbench.colorCustomizations": {
+      "activityBar.background": "#0f172a",
+      "titleBar.activeBackground": "#0f172a",
+      "titleBar.activeForeground": "#e2e8f0"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "bradlc.vscode-tailwindcss",
+      "prisma.prisma",
+      "ms-azuretools.vscode-docker",
+      "ckolkman.vscode-postgres",
+      "mtxr.sqltools",
+      "mtxr.sqltools-driver-pg",
+      "yoavbls.pretty-ts-errors",
+      "usernamehw.errorlens",
+      "GitHub.copilot",
+      "ms-playwright.playwright",
+      "firsttris.vscode-jest-runner",
+      "humao.rest-client",
+      "zhuangtongfa.material-theme",
+      "PKief.material-icon-theme"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "🌐 Debug Web",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder}/apps/web",
+        "runtimeExecutable": "pnpm",
+        "runtimeArgs": ["dev"],
+        "env": { "NODE_ENV": "development" },
+        "console": "integratedTerminal"
+      },
+      {
+        "name": "⚙️ Debug API",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder}/apps/api",
+        "runtimeExecutable": "pnpm",
+        "runtimeArgs": ["start:debug"],
+        "env": { "NODE_ENV": "development" },
+        "console": "integratedTerminal"
+      },
+      {
+        "name": "🔄 Debug Worker",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder}/apps/worker",
+        "runtimeExecutable": "pnpm",
+        "runtimeArgs": ["start:debug"],
+        "env": { "NODE_ENV": "development" },
+        "console": "integratedTerminal"
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "🐳 Start Docker services",
+        "type": "shell",
+        "command": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
+        "group": "build",
+        "presentation": { "reveal": "always" }
+      },
+      {
+        "label": "🗄️ Run DB migrations",
+        "type": "shell",
+        "command": "pnpm db:migrate",
+        "group": "build"
+      },
+      {
+        "label": "🚀 Dev (all services)",
+        "type": "shell",
+        "command": "pnpm dev",
+        "group": { "kind": "build", "isDefault": true },
+        "presentation": { "reveal": "always", "panel": "new" }
+      }
+    ]
+  }
+}

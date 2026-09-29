@@ -1,0 +1,129 @@
+version: '3.9'
+
+# ============================================================
+# ZPF Command Center — Local Dev Services
+# Run: docker compose -f infra/docker/docker-compose.dev.yml up -d
+# ============================================================
+
+services:
+
+  # ──────────────────────────────────────
+  # PostgreSQL — main database
+  # ──────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: zpf-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zpf_db
+      POSTGRES_USER: zpf_user
+      POSTGRES_PASSWORD: zpf_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./init/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zpf_user -d zpf_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────────────────
+  # Redis — cache, queues (BullMQ), sessions
+  # ──────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: zpf-redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────────────────
+  # MinIO — S3-compatible local storage
+  # Console: http://localhost:9001
+  # API:     http://localhost:9000
+  # ──────────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: zpf-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio_admin
+      MINIO_ROOT_PASSWORD: minio_password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./data/minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # ──────────────────────────────────────
+  # MinIO bucket setup (runs once)
+  # ──────────────────────────────────────
+  minio-setup:
+    image: minio/mc:latest
+    container_name: zpf-minio-setup
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minio_admin minio_password;
+      mc mb --ignore-existing local/zpf-media;
+      mc mb --ignore-existing local/zpf-raw-payloads;
+      mc anonymous set download local/zpf-media;
+      echo 'MinIO buckets ready';
+      "
+    restart: on-failure
+
+  # ──────────────────────────────────────
+  # Redis Insight — GUI for Redis (optional)
+  # http://localhost:8001
+  # ──────────────────────────────────────
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: zpf-redis-insight
+    restart: unless-stopped
+    ports:
+      - "8001:5540"
+    volumes:
+      - ./data/redis-insight:/data
+    profiles:
+      - tools
+
+  # ──────────────────────────────────────
+  # pgAdmin — GUI for PostgreSQL (optional)
+  # http://localhost:5050
+  # Login: admin@zpf.local / admin
+  # ──────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: zpf-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@zpf.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+    profiles:
+      - tools
+
+networks:
+  default:
+    name: zpf-network

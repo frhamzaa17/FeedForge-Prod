@@ -1,0 +1,38 @@
+{
+  "name": "zpf-social-command-center",
+  "version": "0.1.0",
+  "private": true,
+  "description": "0.5 Show Social Command Center - unified social publishing, analytics, AI insights, and reports",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-turbo.ps1 dev",
+    "build": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-turbo.ps1 build",
+    "start": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-turbo.ps1 start",
+    "lint": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-turbo.ps1 lint",
+    "typecheck": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-turbo.ps1 typecheck",
+    "test": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-turbo.ps1 test",
+    "db:generate": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-turbo.ps1 db:generate",
+    "db:migrate": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-turbo.ps1 db:migrate",
+    "db:seed": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-turbo.ps1 db:seed",
+    "db:studio": "cd packages/database && pnpm drizzle-kit studio",
+    "docker:dev": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
+    "docker:down": "docker compose -f infra/docker/docker-compose.dev.yml down",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0",
+    "prettier": "^3.3.0",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

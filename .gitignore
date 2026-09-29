@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+dist/
+*.tsbuildinfo
+
+# Turbo cache
+.turbo/
+
+# Runtime / local state (contains encrypted OAuth tokens — never commit)
+apps/api/data/
+
+# Environment files — copy .env.example to .env and fill in values
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Test coverage
+coverage/
+
+# Temporary Claude/agent workspaces
+.agents/
+.runtime/
+.tmp-pdf-tools/
+.tools/
+
+# Docker volumes
+infra/docker/data/

@@ -1,0 +1,31 @@
+{
+  "name": "@zpf/database",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No database tests yet\"",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx src/seed.ts",
+    "clean": "if exist dist rmdir /s /q dist"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.31.0",
+    "postgres": "^3.4.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.22.0",
+    "tsx": "^4.15.0",
+    "typescript": "^5.4.0"
+  }
+}

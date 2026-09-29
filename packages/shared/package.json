@@ -1,0 +1,23 @@
+{
+  "name": "@zpf/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No shared tests yet\"",
+    "clean": "if exist dist rmdir /s /q dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

@@ -1,0 +1,51 @@
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: api
+    env_file:
+      - ../../.env.production
+    restart: unless-stopped
+    volumes:
+      # This contains accounts, sessions, and encrypted OAuth tokens. Back it up.
+      - ../../data/api:/app/apps/api/data
+    expose:
+      - "4000"
+    mem_limit: 512m
+    cpus: 0.75
+
+  web:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: web
+      args:
+        NEXT_PUBLIC_API_URL: /api
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped
+    expose:
+      - "3000"
+    mem_limit: 512m
+    cpus: 0.75
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    env_file:
+      - ../../.env.production
+    ports:
+      - "80:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - web
+    mem_limit: 128m
+
+volumes:
+  caddy_data:
+  caddy_config:
